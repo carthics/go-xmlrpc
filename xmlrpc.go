@@ -27,6 +27,20 @@ func Request(url string, method string, params ...interface{}) []interface{} {
 	return Unserialize(response.Body)
 }
 
+func RequestPost(url string, method string, params ...interface{}) []interface{} {
+	request := Serialize(method, params)
+	// log.Printf("%s", request)
+	buffer := bytes.NewBuffer([]byte(request))
+
+	response, err := http.Post(url, "application/json", buffer)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer response.Body.Close()
+
+	return Unserialize(response.Body)
+}
+
 type MethodResponse struct {
 	Params []Param `xml:"params>param"`
 }
