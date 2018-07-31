@@ -25,6 +25,7 @@ func Request(url string, method string, params ...interface{}) []interface{} {
 	}
 	defer response.Body.Close()
 
+	log.Println(Unserialize(response.Body))
 	return Unserialize(response.Body)
 }
 
