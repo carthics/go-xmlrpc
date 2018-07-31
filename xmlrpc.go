@@ -115,6 +115,7 @@ func Serialize(method string, params []interface{}) string {
 
 	request += "</params></methodCall>"
 
+	log.Println(request)
 	return request
 }
 
@@ -147,6 +148,5 @@ func serialize(value interface{}) string {
 
 	}
 	result += "</value>"
-	log.Println(result)
 	return result
 }
