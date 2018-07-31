@@ -147,5 +147,6 @@ func serialize(value interface{}) string {
 
 	}
 	result += "</value>"
+	log.Println(result)
 	return result
 }
