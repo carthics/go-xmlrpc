@@ -134,7 +134,7 @@ func serialize(value interface{}) string {
 				result += "<member>"
 				result += fmt.Sprintf("<name>%s</name>", k)
 				if strings.EqualFold(k, "bits"){
-					result += fmt.Sprintf("<value><base64><![CDATA[---%s---]]</base64></value>", v)
+					result += fmt.Sprintf("<value><base64><![CDATA[---%s---]]></base64></value>", v)
 				}else{
 					result += serialize(v)
 				}				
