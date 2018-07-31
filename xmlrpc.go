@@ -122,7 +122,7 @@ func serialize(value interface{}) string {
 	result := "<value>"
 	switch value.(type) {
 	case string:
-		result += fmt.Sprintf("	%s</string>", value.(string))
+		result += fmt.Sprintf("<string>%s</string>", value.(string))
 		break
 	case int:
 		result += fmt.Sprintf("<int>%d</int>", value)
