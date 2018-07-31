@@ -16,7 +16,7 @@ import (
 
 func Request(url string, method string, params ...interface{}) []interface{} {
 	request := Serialize(method, params)
-	// log.Printf("%s", request)
+	log.Printf("%s", request)
 	buffer := bytes.NewBuffer([]byte(request))
 
 	response, err := http.Post(url, "text/xml", buffer)
@@ -114,8 +114,7 @@ func Serialize(method string, params []interface{}) string {
 	}
 
 	request += "</params></methodCall>"
-
-	log.Println(request)
+	
 	return request
 }
 
@@ -123,7 +122,7 @@ func serialize(value interface{}) string {
 	result := "<value>"
 	switch value.(type) {
 	case string:
-		result += fmt.Sprintf("<string>%s</string>", value.(string))
+		result += fmt.Sprintf("	%s</string>", value.(string))
 		break
 	case int:
 		result += fmt.Sprintf("<int>%d</int>", value)
