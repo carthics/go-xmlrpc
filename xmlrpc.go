@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"reflect"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -19,20 +20,6 @@ func Request(url string, method string, params ...interface{}) []interface{} {
 	buffer := bytes.NewBuffer([]byte(request))
 
 	response, err := http.Post(url, "text/xml", buffer)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer response.Body.Close()
-
-	return Unserialize(response.Body)
-}
-
-func RequestPost(url string, method string, params ...interface{}) []interface{} {
-	request := Serialize(method, params)
-	// log.Printf("%s", request)
-	buffer := bytes.NewBuffer([]byte(request))
-
-	response, err := http.Post(url, "application/json", buffer)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -146,7 +133,11 @@ func serialize(value interface{}) string {
 			for k, v := range value.(map[string]interface{}) {
 				result += "<member>"
 				result += fmt.Sprintf("<name>%s</name>", k)
-				result += serialize(v)
+				if strings.EqualFold(k, "bits"){
+					result += fmt.Sprintf("<value><base64><![CDATA[---%s---]]</base64></value>", v)
+				}else{
+					result += serialize(v)
+				}				
 				result += "</member>"
 			}
 			result += "</struct>"
