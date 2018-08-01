@@ -16,7 +16,6 @@ import (
 
 func Request(url string, method string, params ...interface{}) []interface{} {
 	request := Serialize(method, params)
-	log.Printf("%s", request)
 	buffer := bytes.NewBuffer([]byte(request))
 
 	response, err := http.Post(url, "text/xml", buffer)
