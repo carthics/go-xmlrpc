@@ -14,17 +14,32 @@ import (
 	"time"
 )
 
-func Request(url string, method string, params ...interface{}) []interface{} {
+func Request(url string, method string, params ...interface{}) ([]interface{}, error) {
+	unserializedResponse := make([]interface{}, 0)
+	var err error
+	var response *http.Response
+
 	request := Serialize(method, params)
 	buffer := bytes.NewBuffer([]byte(request))
 
-	response, err := http.Post(url, "text/xml", buffer)
+	response, err = http.Post(url, "text/xml", buffer)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return unserializedResponse, err
 	}
-	defer response.Body.Close()
+	
+	if response != nil && response.Body != nil {
+		defer response.Body.Close()
+	}
 
-	return Unserialize(response.Body)
+	unserializedResponse,err = Unserialize(response.Body)
+
+	if err != nil{
+		log.Println(err)
+		return unserializedResponse, err
+	}
+	
+	return unserializedResponse, nil
 }
 
 type MethodResponse struct {
@@ -83,22 +98,25 @@ func unserialize(value Value) interface{} {
 	return nil
 }
 
-func Unserialize(buffer io.ReadCloser) []interface{} {
-	body, err := ioutil.ReadAll(buffer)
+func Unserialize(buffer io.ReadCloser) ([]interface{}, error) {
+	var body []byte
+	var err error
+	result := make([]interface{}, 0)
+	body, err = ioutil.ReadAll(buffer)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return result, err
 	}
-	// log.Printf("%s", body)
 
 	var response MethodResponse
 	xml.Unmarshal(body, &response)
 
-	result := make([]interface{}, len(response.Params))
+	result = make([]interface{}, len(response.Params))
 	for i, param := range response.Params {
 		result[i] = unserialize(param.Value)
 	}
 
-	return result
+	return result, nil
 }
 
 func Serialize(method string, params []interface{}) string {
@@ -140,8 +158,6 @@ func serialize(value interface{}) string {
 				result += "</member>"
 			}
 			result += "</struct>"
-		} else {
-			log.Fatal(value)
 		}
 
 	}
